@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pioneer Events - Display</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .progress-bar-container {
+            width: 80%;
+            height: 10px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            margin-top: 40px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            /* --- This is the fix --- */
+            flex-shrink: 0; /* Prevents the container from shrinking inside its flex parent */
+        }
+
+        .progress-bar {
+            width: 100%; 
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-purple-light) 0%, var(--accent-purple-dark) 100%);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-container">
+        <h1 id="display-header">Loading...</h1>
+        <p id="display-body"></p>
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+    </div>
+    <div class="nav-button-container">
+        <button id="back-button" class="control-button nav-button">BACK</button>
+        <button id="standby-button" class="control-button nav-button">STANDBY</button>
+    </div>
+
+    <script>
+        let autoRedirectTimeout;
+        function goTo(page) {
+            document.body.classList.add('fade-out');
+            setTimeout(() => { window.location.href = page; }, 750);
+        }
+        function sendUDPCommand(command, redirectPage) {
+            clearAutoRedirectTimer();
+            const url = `http://192.168.8.106:5000/udp?command=${encodeURIComponent(command)}`;
+            fetch(url).catch(error => console.error(`UDP command '${command}' failed:`, error));
+            if (redirectPage) { goTo(redirectPage); }
+        }
+        function clearAutoRedirectTimer() { clearTimeout(autoRedirectTimeout); }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const header = params.get('header');
+            const bodyText = params.get('body');
+            const timer = parseInt(params.get('timer'), 10);
+
+            document.getElementById('display-header').textContent = header || "Display";
+            document.getElementById('display-body').innerHTML = bodyText || "No content provided.";
+            document.title = `Pioneer Events - ${header}`;
+
+            const progressBar = document.getElementById('progress-bar');
+            if (timer && progressBar) {
+                let startTime = null;
+                function animateProgressBar(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const elapsedTime = timestamp - startTime;
+                    const progress = Math.min(1, elapsedTime / timer);
+                    const newWidth = 100 - (progress * 100);
+                    progressBar.style.width = `${newWidth}%`;
+                    if (elapsedTime < timer) {
+                        requestAnimationFrame(animateProgressBar);
+                    }
+                }
+                requestAnimationFrame(animateProgressBar);
+                autoRedirectTimeout = setTimeout(() => goTo('index.html'), timer);
+            }
+        });
+        
+        document.getElementById('back-button').addEventListener('click', () => { clearAutoRedirectTimer(); goTo('index.html'); });
+        document.getElementById('standby-button').addEventListener('click', () => { sendUDPCommand('LOCATION 1/0/5 PRESS', 'standby.html'); });
+    </script>
+</body>
+</html>

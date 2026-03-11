@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIONEER EVENTS Controller</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>PIONEER EVENTS</h1>
+        <div class="button-grid">
+            <button id="button-1" class="control-button">INTRO</button>
+            <button id="button-2" class="control-button">BIDDING NATION 2034</button>
+            <button id="button-3" class="control-button">PROPTECH</button>
+            <button id="button-4" class="control-button">AL HILAL MUSEUM</button>
+            <button id="button-5" class="control-button">AL HILAL x PIONEER EVENTS</button>
+            <button id="button-6" class="control-button">STANDBY</button> 
+        </div>
+    </div>
+
+    <script>
+        const inactivityTimeout = 30000; // 30 seconds
+        let timeout;
+
+        function goTo(page) {
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = page;
+            }, 750);
+        }
+
+        function resetTimer() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => goTo('standby.html'), inactivityTimeout);
+        }
+
+        document.addEventListener('mousemove', resetTimer);
+        document.addEventListener('mousedown', resetTimer);
+        document.addEventListener('keypress', resetTimer);
+        document.addEventListener('touchmove', resetTimer);
+        document.addEventListener('touchend', resetTimer);
+
+        function sendUDPCommand(command, redirectPage = null) {
+            resetTimer(); 
+            const url = `http://192.168.8.106:5000/udp?command=${encodeURIComponent(command)}`;
+            
+            fetch(url).catch(error => console.error(`UDP command '${command}' failed:`, error));
+
+            if (redirectPage) {
+                goTo(redirectPage);
+            }
+        }
+
+        document.getElementById('button-1').addEventListener('click', () => {
+            const header = "INTRO";
+            const body = "Pioneer Event is a Saudi Event Management Company established in 2016. Our aim is to be the leading Event Management Company in the industry and to help our partners reach satisfying goals for their events. In Pioneer Event we offer a wide variety of services in the Event Management industry from the design & planning phase till the execution, operation & closing phases.";
+            const timer = 73000;
+            const redirectUrl = `display.html?header=${encodeURIComponent(header)}&body=${encodeURIComponent(body)}&timer=${timer}`;
+            sendUDPCommand('LOCATION 1/0/0 PRESS', redirectUrl);
+        });
+        
+        document.getElementById('button-2').addEventListener('click', () => {
+            const header = "BIDDING NATION 2034";
+            const body = "We are proud to carry out an exceptional event that promises an exceptional edition of the World🏆 Cup";
+            const timer = 68000;
+            const redirectUrl = `display.html?header=${encodeURIComponent(header)}&body=${encodeURIComponent(body)}&timer=${timer}`;
+            sendUDPCommand('LOCATION 1/0/1 PRESS', redirectUrl);
+        });
+
+        document.getElementById('button-3').addEventListener('click', () => {
+            const header = "PROPTECH";
+            const body = "Behind the scenes of preparing the Saudi ProTech summit, with the planning and management of our distinguished team, we were able to accomplish the task.";
+            const timer = 114000;
+            const redirectUrl = `display.html?header=${encodeURIComponent(header)}&body=${encodeURIComponent(body)}&timer=${timer}`;
+            sendUDPCommand('LOCATION 1/0/2 PRESS', redirectUrl);
+        });
+        
+        document.getElementById('button-4').addEventListener('click', () => {
+            const header = "AL HILAL MUSEUM";
+            const body = "On the 67th anniversary, we embodied the achievements in a museum worthy of its heritage and history";
+            const timer = 51000;
+            const redirectUrl = `display.html?header=${encodeURIComponent(header)}&body=${encodeURIComponent(body)}&timer=${timer}`;
+            sendUDPCommand('LOCATION 1/0/3 PRESS', redirectUrl);
+        });
+
+        document.getElementById('button-5').addEventListener('click', () => {
+            const header = "AL HILAL x PIONEER EVENTS";
+            const body = "Every partnership has a story, and every one has a sparkle that illuminates the path of glory . We are proud to be a part of this story 💙🤍";
+            const timer = 65000;
+            const redirectUrl = `display.html?header=${encodeURIComponent(header)}&body=${encodeURIComponent(body)}&timer=${timer}`;
+            sendUDPCommand('LOCATION 1/0/4 PRESS', redirectUrl);
+        });
+        
+        document.getElementById('button-6').addEventListener('click', () => {
+            sendUDPCommand('LOCATION 1/0/5 PRESS', 'standby.html');
+        });
+        
+        resetTimer();
+    </script>
+</body>
+</html>
