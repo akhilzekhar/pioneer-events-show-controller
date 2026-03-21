@@ -1,6 +1,6 @@
 # Pioneer Events Show Controller  
 
-> ⚠️ **Experimental Project** — Built and tested for a live event production. Not a polished product, but it worked on the show floor.
+> ⚠️ **Experimental Project** — Built and tested for a live event production. Not a polished product, but it worked on test.
 
 A browser-based show control panel designed to be operated from a tablet (iPad or Android) during a live event. Pressing a button triggers a UDP command to Bitfocus Companion, which controls the media server — while simultaneously displaying the scene title and description on a secondary screen, with a real-time progress bar synced to the video clip duration.
 
