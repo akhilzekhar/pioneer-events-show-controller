@@ -1,4 +1,4 @@
-# Pioneer Events Show Controller
+# Pioneer Events Show Controller 
 
 > ⚠️ **Experimental Project** — Built and tested for a live event production. Not a polished product, but it worked on the show floor.
 
